@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ambulancia Renacer IPS</title>
+    <title>Ambulancia Renacer IPSA</title>
     <style>
 
         canvas {
@@ -283,23 +283,45 @@
             <label for="numeroTraslado">Número traslado</label>
             <input type="number" id="numeroTraslado" name="numeroTraslado" required>
 
+            <label for="fechaHoraDespacho">Fecha y hora de despacho</label>
+            <input type="datetime-local" id="fechaHoraDespacho" name="fechaHoraDespacho" required>
+
+            <label for="triaje">Triaje</label>
+            <select id="triaje" name="triaje" required>
+                <option value="Triage I (Rojo)">Triage I (Rojo): Atención inmediata.</option>
+                <option value="Triage II (Naranja)">Triage II (Naranja): Atención urgente.</option>
+                <option value="Triage III (Amarillo)">Triage III (Amarillo): Atención diferida.</option>
+                <option value="Triage IV (Verde)">Triage IV (Verde): Atención ambulatoria o referida a otro servicio.</option>
+                <option value="Triage V (Azul)">Triage V (Azul): No requiere atención médica urgente.</option>
+            </select>
+
+            <label for="fechaHoraLlegadaOrigen">Fecha y hora de llegada al origen</label>
+            <input type="datetime-local" id="fechaHoraLlegadaOrigen" name="fechaHoraLlegadaOrigen" required>
+
             <label for="origen">Origen</label>
             <input type="text" id="origen" name="origen" required>
 
-            <label for="fechaHoraSalida">Fecha y hora de salida</label>
-            <input type="datetime-local" id="fechaHoraSalida" name="fechaHoraSalida" required>
-
-            <label for="destinoUno">Destino uno</label>
-            <input type="text" id="destinoUno" name="destinoUno" required>
+            <label for="fechaHoraSalidaOrigen">Fecha y hora de salida origen</label>
+            <input type="datetime-local" id="fechaHoraSalidaOrigen" name="fechaHoraSalidaOrigen" required>
 
             <label for="fechaHoraLlegadaUno">Fecha y hora de llegada (Destino uno)</label>
             <input type="datetime-local" id="fechaHoraLlegadaUno" name="fechaHoraLlegadaUno" required>
 
-            <label for="destinoDos">Destino dos</label>
-            <input type="text" id="destinoDos" name="destinoDos">
+            <label for="destinoUno">Destino uno</label>
+            <input type="text" id="destinoUno" name="destinoUno" required>
+
+            <label for="fechaHoraSalidaUno">Fecha y hora de salida (Destino uno)</label>
+            <input type="datetime-local" id="fechaHoraSalidaUno" name="fechaHoraSalidaUno" required>
+
 
             <label for="fechaHoraLlegadaDos">Fecha y hora de llegada (Destino dos)</label>
             <input type="datetime-local" id="fechaHoraLlegadaDos" name="fechaHoraLlegadaDos">
+
+            <label for="destinoDos">Destino dos</label>
+            <input type="text" id="destinoDos" name="destinoDos">
+
+            <label for="fechaHoraSalidaDos">Fecha y hora de salida (Destino dos)</label>
+            <input type="datetime-local" id="fechaHoraSalidaDos" name="fechaHoraSalidaDos">
 
             <label for="motivoTraslado">Motivo de traslado</label>
             <input type="text" id="motivoTraslado" name="motivoTraslado" required>
@@ -351,13 +373,14 @@
           </select>
       
           <label for="pizarra">Área de firma</label>
-          <canvas id="pizarra"></canvas>
+          <canvas id="pizarra" width="450" height="337"></canvas>
+
       
           <label for="colorTinta">Color de tinta</label>
           <input type="color" id="colorTinta" name="colorTinta" class="boton" value="#000000">
       
           <label for="grosorLapiz">Grosor del lápiz</label>
-          <input type="range" id="grosorLapiz" name="grosorLapiz" class="boton" min="1" max="20" value="5">
+          <input type="range" id="grosorLapiz" name="grosorLapiz" class="boton" min="1" max="20" value="3">
       
           <div class="contenedor-botones">
             <button type="button" id="limpiar" class="boton">Limpiar</button>
@@ -371,6 +394,12 @@
 
 
     <script>
+
+        window.addEventListener("beforeunload", function (e) {
+            // Muestra un mensaje del navegador
+            e.preventDefault();
+            e.returnValue = "";
+        });
 
         let departamentosData = [];  // Para almacenar los departamentos únicos
         let municipiosData = [];     // Para almacenar todos los municipios
@@ -494,7 +523,7 @@
             let nuevaPosicionX = 0;
             let nuevaPosicionY = 0;
             let colorLapiz = "#000000";
-            let grosorLapiz = 5;
+            let grosorLapiz = 3;
 
             // Función para ajustar el tamaño del canvas y redibujar las líneas
             function ajustarCanvas() {
@@ -644,11 +673,7 @@ document.querySelector('#guardar').addEventListener('click', () => {
 
     guardarImagen.guardar(nombreArchivo);
 });
-
-
-
-
-        
+      
         function showContent(tabId) {
             const contents = document.querySelectorAll('.content');
             contents.forEach(content => {
@@ -722,8 +747,8 @@ document.querySelector('#guardar').addEventListener('click', () => {
             });
 
             const csvContent = [
-                ['Número Traslado', 'Origen', 'Fecha y Hora de Salida', 'Destino Uno', 'Fecha y Hora de Llegada Uno', 'Destino Dos', 'Fecha y Hora de Llegada Dos', 'Motivo de Traslado', 'Médico de Traslado', 'Enfermera de Traslado', 'Conductor de Traslado', 'Profesional que Entrega', 'Profesional que Recibe Destino Uno', 'Profesional que Recibe Destino Dos','Nombre del Acompañante', 'Teléfono del Acompañante', 'Notas de Traslado'],
-                [data.numeroTraslado, data.origen, data.fechaHoraSalida, data.destinoUno, data.fechaHoraLlegadaUno, data.destinoDos, data.fechaHoraLlegadaDos, data.motivoTraslado, data.medicoTraslado, data.enfermeraTraslado, data.conductorTraslado, data.profesionalEntrega, data.profesionalRecibeUno, data.profesionalRecibeDos,data.nombreAcompañante, data.telefonoAcompañante, data.notasTraslado]
+                ['Número traslado','Fecha y hora de despacho','Triaje','Fecha y hora de llegada al origen','Origen','Fecha y hora de salida origen','Fecha y hora de llegada (Destino uno)','Destino uno','Fecha y hora de salida (Destino uno)','Fecha y hora de llegada (Destino dos)','Destino dos','Fecha y hora de salida (Destino dos)','Motivo de traslado','Médico de traslado','Enfermera de traslado','Conductor de traslado','Profesional que entrega','Profesional que recibe destino uno','Profesional que recibe destino dos','Nombre del acompañante','Teléfono del acompañante','Notas de traslado'],
+                [ data.numeroTraslado,data.fechaHoraDespacho,data.triaje,data.fechaHoraLlegadaOrigen,data.origen,data.fechaHoraSalidaOrigen,data.fechaHoraLlegadaUno,data.destinoUno,data.fechaHoraSalidaUno,data.fechaHoraLlegadaDos,data.destinoDos,data.fechaHoraSalidaDos,data.motivoTraslado,data.medicoTraslado,data.enfermeraTraslado,data.conductorTraslado,data.profesionalEntrega,data.profesionalRecibeUno,data.profesionalRecibeDos,data.nombreAcompañante,data.telefonoAcompañante,data.notasTraslado]
             ];
 
             const csvRows = csvContent.map(row => row.join(',')).join('\n');
@@ -737,7 +762,6 @@ document.querySelector('#guardar').addEventListener('click', () => {
 
             // ✅ FileSaver.js inicia la descarga/compartir
             saveAs(blob, fileName);
-
 
             alert('¡Datos del traslado guardados correctamente en la base de datos!');
         });
