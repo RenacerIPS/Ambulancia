@@ -236,6 +236,14 @@
             <label for="fechaNacimiento">Fecha de nacimiento</label>
             <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
 
+            <label for="archivoPaises">País de nacimiento</label>
+            <input type="file" id="archivoPaises" accept=".mdbx" />
+
+            <label for="paisNacimiento">País de Nacimiento:</label>
+            <select id="paisNacimiento" name="paisNacimiento" required>
+                <option value="">Seleccione un País</option>
+            </select>
+
             <label for="lugarNacimiento">Lugar de nacimiento</label>
             <input type="file" id="archivoColombia" accept=".mdbx" />
     
@@ -473,6 +481,58 @@
             }
         });
 
+
+        // Inicio
+
+                document.getElementById("archivoPaises").addEventListener("change", function(event) {
+            const archivo = event.target.files[0];
+
+            if (archivo) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const data = e.target.result;
+
+                    // Separar los datos por líneas
+                    const lineas = data.trim().split('\n');
+
+                    // Select de País de Nacimiento
+                    const selectPaisNacimiento = document.getElementById("paisNacimiento");
+
+                    // Limpiar opciones anteriores
+                    selectPaisNacimiento.innerHTML = '<option value="">Seleccione un País</option>';
+
+                    // Recorrer cada línea
+                    lineas.forEach(linea => {
+                        const [codigoNumerico, nombrePais, codigoAlpha2] = linea.split('|');
+
+                        if (codigoNumerico && nombrePais && codigoAlpha2) {
+
+                            // Crear la opción
+                            const optionPais = document.createElement("option");
+                            //optionPais.value = codigoAlpha2.trim().toUpperCase();  // puedes usar alfa-2 o numérico
+                            optionPais.value = nombrePais.trim();     // ← ahora guarda el nombre del pais
+                            optionPais.textContent = nombrePais.trim();
+
+                            // Añadir al select
+                            selectPaisNacimiento.appendChild(optionPais);
+                        }
+                    });
+
+                    console.log("Paises cargados correctamente");
+                };
+
+                reader.readAsText(archivo);
+            } else {
+                console.error("No se seleccionó ningún archivo.");
+            }
+        });
+
+
+
+        // fin
+
+
         // Función para manejar el cambio de selección de departamento de nacimiento
         document.getElementById("departamentosNacimiento").addEventListener("change", function() {
             const codigoDepartamentoSeleccionado = this.value;
@@ -673,7 +733,11 @@ document.querySelector('#guardar').addEventListener('click', () => {
 
     guardarImagen.guardar(nombreArchivo);
 });
-      
+
+
+
+
+        
         function showContent(tabId) {
             const contents = document.querySelectorAll('.content');
             contents.forEach(content => {
@@ -712,14 +776,15 @@ document.querySelector('#guardar').addEventListener('click', () => {
                 data[key] = value;
             });
             
+                const paisNacimiento = document.getElementById("paisNacimiento").value;
                 const departamentoNacimiento = document.getElementById("departamentosNacimiento").value;
                 const municipioNacimiento = document.getElementById("municipiosNacimiento").value;
                 const departamentoResidencia = document.getElementById("departamentosResidencia").value;
                 const municipioResidencia = document.getElementById("municipiosResidencia").value;
 
             const csvContent = [
-                ['Primer Nombre','Segundo Nombre','Primer Apellido','Segundo Apellido', 'Tipo Documento', 'Número Documento', 'Género', 'Fecha Nacimiento', 'Departamento Nacimiento', 'Municipio Nacimiento', 'Aseguradora', 'Departamento Residencia', 'Municipio Residencia','Dirección', 'Teléfono'],
-                [ data.primernombre ,data.segundonombre,data.primerapellido,data.segundoapellido, data.tipoDocumento, data.numeroDocumento, data.genero, data.fechaNacimiento,departamentoNacimiento,municipioNacimiento, data.aseguradora, departamentoResidencia, municipioResidencia, data.direccion, data.telefono]
+                ['Primer Nombre','Segundo Nombre','Primer Apellido','Segundo Apellido', 'Tipo Documento', 'Número Documento', 'Género', 'Fecha Nacimiento', 'Departamento Nacimiento', 'Municipio Nacimiento', 'Aseguradora', 'Departamento Residencia', 'Municipio Residencia','Dirección', 'Teléfono', 'País Nacimiento'],
+                [ data.primernombre ,data.segundonombre,data.primerapellido,data.segundoapellido, data.tipoDocumento, data.numeroDocumento, data.genero, data.fechaNacimiento, departamentoNacimiento,municipioNacimiento, data.aseguradora, departamentoResidencia, municipioResidencia, data.direccion, data.telefono,paisNacimiento]
             ];
 
             const csvRows = csvContent.map(row => row.join(',')).join('\n');
