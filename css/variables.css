@@ -1,0 +1,21 @@
+:root{
+
+--colorPrincipal:#005C97;
+
+--colorSecundario:#007ACC;
+
+--colorFondo:#F5F7FA;
+
+--colorTexto:#222;
+
+--colorBoton:#1976D2;
+
+--colorBotonHover:#0D47A1;
+
+--radio:10px;
+
+--sombra:0px 3px 8px rgba(0,0,0,.20);
+
+--espacio:15px;
+
+}
