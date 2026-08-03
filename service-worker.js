@@ -1,4 +1,4 @@
-const CACHE_NAME = "ambulancias-v3";
+const CACHE_NAME = "ambulancias-v4";
 
 const ARCHIVOS = [
 
