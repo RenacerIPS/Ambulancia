@@ -400,6 +400,40 @@ function mostrarFormularioPaciente() {
 
 </div>
 
+<div class="seccion">
+
+    <h3>Profesional que Entrega en Origen</h3>
+
+    <div class="fila">
+
+        <div class="grupo">
+
+            <label>Nombre Completo</label>
+
+            <input
+                type="text"
+                id="nombreEntregaOrigen">
+
+        </div>
+
+    </div>
+
+    <div class="fila">
+
+        <div class="grupo">
+
+            <label>Documento / Tarjeta Profesional</label>
+
+            <input
+                type="text"
+                id="documentoEntregaOrigen">
+
+        </div>
+
+    </div>
+
+</div>
+
         </div>
 
 
@@ -971,7 +1005,13 @@ async function guardarFormulario(e){
         document.getElementById("fechaLlegadaOrigen")?.value || "",
 
     fechaSalida:
-        document.getElementById("fechaSalidaOrigen")?.value || ""
+        document.getElementById("fechaSalidaOrigen")?.value || "",
+
+    nombreEntrega:
+        document.getElementById("nombreEntregaOrigen")?.value || "",
+
+    documentoEntrega:
+        document.getElementById("documentoEntregaOrigen")?.value || ""
 
 },
 
@@ -1261,6 +1301,12 @@ async function buscarTraslado() {
 
     document.getElementById("documentoConductor").value =
         traslado.tripulacion?.conductor?.documento || "";
+
+    document.getElementById("nombreEntregaOrigen").value =
+    traslado.origen?.nombreEntrega || "";
+
+    document.getElementById("documentoEntregaOrigen").value =
+    traslado.origen?.documentoEntrega || "";
 }
 
 function inicializarCanvasFirma() {
@@ -1580,6 +1626,8 @@ async function exportarTraslado() {
         traslado.origen?.municipio || "",
         traslado.origen?.fechaLlegada || "",
         traslado.origen?.fechaSalida || "",
+        traslado.origen?.nombreEntrega || "",
+        traslado.origen?.documentoEntrega || "",
 
         traslado.destino1?.institucion || "",
         traslado.destino1?.departamento || "",
